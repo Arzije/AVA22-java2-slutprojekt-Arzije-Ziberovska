@@ -12,6 +12,8 @@ import org.arzije.ziberovska.model.Producer;
 import org.arzije.ziberovska.view.listeners.ConsumerButtonListeners;
 import org.arzije.ziberovska.view.listeners.ProducerButtonListeners;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class GUI implements BufferObserver {
     private JFrame frame;
@@ -25,6 +27,7 @@ public class GUI implements BufferObserver {
     private Buffer buffer;
     private List<Thread> producerThreads;
     private List<Thread> consumerThreads;
+    private static final Logger logger = LogManager.getLogger(GUI.class);
 
     public GUI() {
         this.buffer = new Buffer();
@@ -64,21 +67,26 @@ public class GUI implements BufferObserver {
         logTextArea.setEditable(false);
         frame.add(logScrollPane);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 8; i++) {
             Producer producer = new Producer(this.buffer, this); // Använd 'this.buffer' istället för 'sharedBuffer'
-            new Thread(producer).start();
+            Thread producerThread = new Thread(producer);
+            producerThreads.add(producerThread); // Lägg till denna rad
+            producerThread.start();
+            log("Producers: " + i);
         }
 
         Random random = new Random();
-        int numOfConsumers = random.nextInt(13) + 3;
+//        int numOfConsumers = random.nextInt(13) + 3;
+                int numOfConsumers = random.nextInt(6) + 5;
         for (int i = 0; i < numOfConsumers; i++) {
             Consumer consumer = new Consumer(buffer, this);
             Thread consumerThread = new Thread(consumer);
             consumerThreads.add(consumerThread);
             consumerThread.start();
+            log("Consumers: " + i);
         }
 
-        System.out.println("Num of consumers: " + numOfConsumers);
+
 
 //        loadButton.addActionListener(e -> loadState());
 //        saveButton.addActionListener(e -> saveState());
@@ -102,37 +110,38 @@ public class GUI implements BufferObserver {
         Thread thread = new Thread(producer);
         producerThreads.add(thread);
         thread.start();
-        log("Producer added.");
+//        log("Producer I added.");
+        System.out.println("Producer I added " + buffer.size());
     }
 
-    //    private void removeProducer() {
-//        if (!producerThreads.isEmpty()) {
-//            Thread lastProducer = producerThreads.remove(producerThreads.size() - 1);
-//            // Stoppar producer-tråden. Se till att du har en mekanism i din Producer-klass för att stoppa den
-//            lastProducer.interrupt();
+        private void removeProducer() {
+        if (!producerThreads.isEmpty()) {
+            Thread lastProducer = producerThreads.remove(producerThreads.size() - 1);
+            // Stoppar producer-tråden. Se till att du har en mekanism i din Producer-klass för att stoppa den
+            lastProducer.interrupt();
 //            log("Producer removed.");
-//        } else {
-//            log("No producer to remove.");
-//        }
-//    }
-    private void removeProducer() {
-        // Om bufferten inte är tom, ta bort en enhet
-        if (buffer.size() > 0) {
-            buffer.remove(); // Detta förutsätter att `remove`-metoden tar bort en enhet
-            log("Unit removed from buffer.");
+            System.out.println("Producer removed.");
         } else {
-            log("Buffer is empty. No unit to remove.");
+            System.out.println("No producer to remove.");
+//            log("No producer to remove.");
         }
     }
 
-
     public void log(String message) {
         logTextArea.append(message + "\n");
+        logger.info(message);
     }
 
     private void updateProgressBar() {
         int currentSize = buffer.size();
         progressBar.setValue(currentSize);
+        if (currentSize <= 10) {
+            progressBar.setForeground(Color.RED);
+        } else if (currentSize >= 90) {
+            progressBar.setForeground(Color.GREEN);
+        } else {
+            progressBar.setForeground(Color.GRAY); // Eller någon annan standardfärg
+        }
     }
 
     @Override

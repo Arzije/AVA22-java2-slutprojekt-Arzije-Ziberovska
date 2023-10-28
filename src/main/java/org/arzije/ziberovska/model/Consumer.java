@@ -22,15 +22,17 @@ public class Consumer implements Runnable{
     public void run() {
         while (isRunning) {
             try {
-                Thread.sleep(sleepTime);
+//                Thread.sleep(sleepTime);
+                Thread.sleep(3000);
 //                System.out.println("Consumed: " + buffer.remove());
                 Item consumed = buffer.remove();
-                System.out.println("Consumed: " + consumed); // Existerande kod
+                System.out.println("Consumed buffer size: " + buffer.size()); // Existerande kod
                 SwingUtilities.invokeLater(() -> log("Consumed: " + consumed)); // Ny kod
 
             } catch (InterruptedException e) {
                 System.out.println("Consumer: Sleep avbruten");
                 isRunning = false;
+                Thread.currentThread().interrupt();
 //                e.printStackTrace();
             }
         }

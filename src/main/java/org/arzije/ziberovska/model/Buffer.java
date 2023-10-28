@@ -17,7 +17,7 @@ public class Buffer {
         items.add(item);
         notifyObservers();
         notifyAll(); // Väcker alla väntande trådar
-        System.out.println("Buffer: " + items);
+//        System.out.println("Buffer buffer size: " + items.size());
     }
 
     public synchronized Item remove(){
