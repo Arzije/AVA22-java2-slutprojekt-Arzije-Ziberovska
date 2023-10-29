@@ -4,9 +4,7 @@ import org.arzije.ziberovska.model.*;
 import org.arzije.ziberovska.logging.Log;
 import org.arzije.ziberovska.view.GUI;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Controller {
     private Buffer buffer;
@@ -24,6 +22,8 @@ public class Controller {
 
         initProducersAndConsumers();
         buffer.addObserver(gui);
+
+        startBufferMonitoring();
     }
 
     private void initProducersAndConsumers() {
@@ -52,7 +52,7 @@ public class Controller {
     }
 
     private void addProducer() {
-        Producer producer = new Producer(buffer, gui);
+        Producer producer = new Producer(buffer, message -> gui.log(message));
         Thread thread = new Thread(producer);
         producerThreads.add(thread);
         thread.start();
@@ -70,7 +70,7 @@ public class Controller {
     }
 
     private void addConsumer(){
-        Consumer consumer = new Consumer(buffer, gui);
+        Consumer consumer = new Consumer(buffer, message -> gui.log(message));
         Thread consumerThread = new Thread(consumer);
         consumerThreads.add(consumerThread);
         consumerThread.start();
@@ -80,6 +80,21 @@ public class Controller {
 
     public int getBufferSize() {
         return buffer.size();
+    }
+
+    private void startBufferMonitoring(){ // la till denna
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                logger.log("Avarege buffer size over last 10 seconds: " + buffer.size());
+                if (buffer.size() >= 90){
+                    logger.log("Buffer size is now high at " + buffer.size() + "items");
+                } else if (buffer.size() <=10){
+                    logger.log("Buffer size is now low at " + buffer.size() + "items");
+                }
+            }
+        }, 0, 10 * 1000);
     }
 }
 

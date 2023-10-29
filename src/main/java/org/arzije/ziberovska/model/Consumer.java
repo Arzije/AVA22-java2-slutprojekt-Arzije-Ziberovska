@@ -7,40 +7,36 @@ import java.util.Random;
 
 public class Consumer implements Runnable{
 
-    Buffer buffer = null;
-    boolean isRunning = true;
-    int sleepTime;
-    private GUI gui;
+    private Buffer buffer = null;
+    private boolean isRunning = true;
+    private int sleepTime;
+    private OnConsumedListener consumedListener;
 
-    public Consumer(Buffer buffer, GUI gui) {
+    public Consumer(Buffer buffer, OnConsumedListener listener) {
         this.buffer = buffer;
-        this.gui = gui;
+        this.consumedListener = listener;
         this.sleepTime = new Random().nextInt(9000) + 1000;
     }
 
     @Override
-    public void run() {
-        while (isRunning) {
+    public void run(){
+        while (isRunning){
             try {
 //                Thread.sleep(sleepTime);
                 Thread.sleep(3000);
-//                System.out.println("Consumed: " + buffer.remove());
                 Item consumed = buffer.remove();
-                System.out.println("Consumed buffer size: " + buffer.size()); // Existerande kod
-                SwingUtilities.invokeLater(() -> log("Consumer consumed an item. Consumption interval: " + sleepTime + " ms. Buffer size: " + buffer.size())); // Uppdaterad kod
-                log("Consumer consumed an item. Consumption interval: " + sleepTime + " ms. Buffer size: " + buffer.size());  // Uppdaterad kod
+
+                if (consumedListener != null){
+                    consumedListener.onConsumed("Consumer consumed an item. Consumption interval: " + sleepTime + " ms. Buffer size: " + buffer.size());
+                }
+
             } catch (InterruptedException e) {
-                log("Consumer: Sleep avbruten");  // Ändrat här
-                System.out.println("Consumer: Sleep avbruten");
+                if (consumedListener != null){
+                    consumedListener.onConsumed("Consumer: Sleep avbruten");
+                }
                 isRunning = false;
                 Thread.currentThread().interrupt();
-//                e.printStackTrace();
             }
-        }
-    }
-    private void log(String message) {
-        if (gui != null) {
-            gui.log(message);
         }
     }
 }
