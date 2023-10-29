@@ -28,7 +28,7 @@ public class Buffer {
         items.add(item);
         int currentSize = items.size();
 
-        if (currentSize >= 75) {
+        if (currentSize >= 90) {
             logger.log("Buffer size is now high at " + currentSize + " items.");
         }
 
@@ -48,8 +48,9 @@ public class Buffer {
         }
         Item item = items.remove();
         int currentSize = items.size();
+        notifyObservers();
 
-        if (currentSize <= 15) {
+        if (currentSize <= 10) {
             logger.log("Buffer size is now low at " + currentSize + " items.");
         }
 

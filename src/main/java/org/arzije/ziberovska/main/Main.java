@@ -1,8 +1,7 @@
 package org.arzije.ziberovska.main;
 
-import org.arzije.ziberovska.model.Buffer;
-import org.arzije.ziberovska.model.Consumer;
-import org.arzije.ziberovska.model.Producer;
+import org.arzije.ziberovska.controller.Controller;
+
 import org.arzije.ziberovska.view.GUI;
 
 import javax.swing.*;
@@ -18,6 +17,7 @@ public class Main {
 //        Consumer consumer = new Consumer(buffer);
 //        Thread consumerThread = new Thread(consumer);
 //        consumerThread.start();
-        SwingUtilities.invokeLater(() -> new GUI());
+        Controller controller = new Controller();
+//        SwingUtilities.invokeLater(() -> new GUI(controller));
     }
 }
