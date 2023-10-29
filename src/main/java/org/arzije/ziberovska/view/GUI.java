@@ -5,6 +5,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
+import org.arzije.ziberovska.logging.Log;
 import org.arzije.ziberovska.model.Buffer;
 import org.arzije.ziberovska.model.BufferObserver;
 import org.arzije.ziberovska.model.Consumer;
@@ -27,7 +28,8 @@ public class GUI implements BufferObserver {
     private Buffer buffer;
     private List<Thread> producerThreads;
     private List<Thread> consumerThreads;
-    private static final Logger logger = LogManager.getLogger(GUI.class);
+//    private static final Logger logger = LogManager.getLogger(GUI.class);
+    Log logger = Log.getInstance();
 
     public GUI() {
         this.buffer = new Buffer();
@@ -62,7 +64,7 @@ public class GUI implements BufferObserver {
         frame.add(saveButton);
 
         // Skapar logg-textområde med skroll
-        logTextArea = new JTextArea(10, 30); // 10 rader hög, 30 tecken bred
+        logTextArea = new JTextArea(25, 55); // 10 rader hög, 30 tecken bred
         logScrollPane = new JScrollPane(logTextArea);
         logTextArea.setEditable(false);
         frame.add(logScrollPane);
@@ -86,12 +88,10 @@ public class GUI implements BufferObserver {
             log("Consumers: " + i);
         }
 
-
-
 //        loadButton.addActionListener(e -> loadState());
 //        saveButton.addActionListener(e -> saveState());
 
-        frame.setSize(400, 300);
+        frame.setSize(600, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
@@ -112,6 +112,8 @@ public class GUI implements BufferObserver {
         thread.start();
 //        log("Producer I added.");
         System.out.println("Producer I added " + buffer.size());
+        log("Producer added. Current number of producers: " + producerThreads.size());  // Justerat meddelandet
+
     }
 
         private void removeProducer() {
@@ -119,25 +121,27 @@ public class GUI implements BufferObserver {
             Thread lastProducer = producerThreads.remove(producerThreads.size() - 1);
             // Stoppar producer-tråden. Se till att du har en mekanism i din Producer-klass för att stoppa den
             lastProducer.interrupt();
-//            log("Producer removed.");
+            log("Producer removed. Current number of producers: " + producerThreads.size());  // Justerat meddelandet
             System.out.println("Producer removed.");
         } else {
+            log("No producer to remove.");  // Ändrat här
             System.out.println("No producer to remove.");
 //            log("No producer to remove.");
         }
     }
 
     public void log(String message) {
-        logTextArea.append(message + "\n");
-        logger.info(message);
+        logTextArea.insert(message + "\n", 0);
+        logTextArea.setCaretPosition(0);
+        logger.log(message);
     }
 
     private void updateProgressBar() {
         int currentSize = buffer.size();
         progressBar.setValue(currentSize);
-        if (currentSize <= 10) {
+        if (currentSize <= 15) {
             progressBar.setForeground(Color.RED);
-        } else if (currentSize >= 90) {
+        } else if (currentSize >= 75) {
             progressBar.setForeground(Color.GREEN);
         } else {
             progressBar.setForeground(Color.GRAY); // Eller någon annan standardfärg

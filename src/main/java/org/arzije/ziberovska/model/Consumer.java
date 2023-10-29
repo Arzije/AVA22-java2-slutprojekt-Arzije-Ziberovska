@@ -27,9 +27,10 @@ public class Consumer implements Runnable{
 //                System.out.println("Consumed: " + buffer.remove());
                 Item consumed = buffer.remove();
                 System.out.println("Consumed buffer size: " + buffer.size()); // Existerande kod
-                SwingUtilities.invokeLater(() -> log("Consumed: " + consumed)); // Ny kod
-
+                SwingUtilities.invokeLater(() -> log("Consumer consumed an item. Consumption interval: " + sleepTime + " ms. Buffer size: " + buffer.size())); // Uppdaterad kod
+                log("Consumer consumed an item. Consumption interval: " + sleepTime + " ms. Buffer size: " + buffer.size());  // Uppdaterad kod
             } catch (InterruptedException e) {
+                log("Consumer: Sleep avbruten");  // Ändrat här
                 System.out.println("Consumer: Sleep avbruten");
                 isRunning = false;
                 Thread.currentThread().interrupt();

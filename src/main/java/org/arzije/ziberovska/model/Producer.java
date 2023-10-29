@@ -26,9 +26,11 @@ public class Producer implements Runnable{
                 Thread.sleep(3000);
                 buffer.add(new Item(""+(char) ((int)(Math.random()*100))));
                 System.out.println("Producer SELF added an item." + buffer.size()); // Existerande kod
-                SwingUtilities.invokeLater(() -> log("Producer added an item.")); // Ny kod
+                SwingUtilities.invokeLater(() -> log("Producer added an item. Production interval: " + sleepTime + " ms. Buffer size: " + buffer.size())); // Uppdaterad kod
+                log("Producer added an item. Production interval: " + sleepTime + " ms. Buffer size: " + buffer.size());  // Uppdaterad kod
 
             } catch (InterruptedException e) {
+                log("Producer: Sleep avbruten");  // Ändrat här
                 System.out.println("Producer: Sleep avbruten");
                 isRunning = false;
                 Thread.currentThread().interrupt();
