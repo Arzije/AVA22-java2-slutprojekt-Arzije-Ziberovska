@@ -1,5 +1,7 @@
 package org.arzije.ziberovska.controller;
 
+import org.arzije.ziberovska.logging.LogObserver;
+import org.arzije.ziberovska.logging.LogSubject;
 import org.arzije.ziberovska.model.*;
 import org.arzije.ziberovska.logging.Log;
 import org.arzije.ziberovska.view.GUI;
@@ -22,9 +24,9 @@ public class Controller {
 
         initConsumers();
         buffer.addObserver(gui);
+        logger.addObserver(gui);
 
         startBufferMonitoring();
-//        setupLogGuiCallback();
     }
 
     private void initConsumers() {
@@ -105,12 +107,9 @@ public class Controller {
         }, 0, 10 * 1000);
     }
 
-//    private void setupLogGuiCallback() {
-//        logger.setGuiCallback(message -> gui.log(message));
-//    }
-
     public void handleClearLogButtonClick() {
         logger.clearLogFile();
     }
+
 }
 

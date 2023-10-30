@@ -2,11 +2,13 @@ package org.arzije.ziberovska.view;
 
 import javax.swing.*;
 import java.awt.*;
+
 import org.arzije.ziberovska.controller.Controller;
 import org.arzije.ziberovska.logging.Log;
+import org.arzije.ziberovska.logging.LogObserver;
 import org.arzije.ziberovska.model.BufferObserver;
 
-public class GUI implements BufferObserver{ //  , OnProducedListener, OnConsumedListener
+public class GUI implements BufferObserver, LogObserver {
     private Controller controller;
     private JFrame frame;
     private JProgressBar progressBar;
@@ -65,10 +67,14 @@ public class GUI implements BufferObserver{ //  , OnProducedListener, OnConsumed
         frame.add(logScrollPane);
     }
 
+    //    public void log(String message) {
+//        logTextArea.insert(message + "\n", 0);
+//        logTextArea.setCaretPosition(0);
+//        logger.log(message);
+//    }
     public void log(String message) {
         logTextArea.insert(message + "\n", 0);
         logTextArea.setCaretPosition(0);
-        logger.log(message);
     }
 
     private void updateProgressBar() {
@@ -86,6 +92,13 @@ public class GUI implements BufferObserver{ //  , OnProducedListener, OnConsumed
     @Override
     public void update() {
         updateProgressBar();
+    }
+
+    @Override
+    public void updateLog(String logMessage) {
+        SwingUtilities.invokeLater(() -> {
+            log(logMessage);
+        });
     }
 
 //    @Override
