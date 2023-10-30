@@ -2,10 +2,6 @@ package org.arzije.ziberovska.model;
 
 import java.util.*;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.arzije.ziberovska.logging.Log;
-
 /**
  * Observable klass
  */
@@ -14,11 +10,18 @@ public class Buffer{
 
     private Queue<Item> items = new LinkedList<>();
     private List<BufferObserver> observers = new ArrayList<>();
+    private int maxCapacity = 100; // Sätt en förvald kapacitet till 100. Detta kan ändras vid behov.
+
+    public Buffer(int maxCapacity) {
+        this.maxCapacity = maxCapacity;
+    }
 
     public synchronized void add(Item item){
-        items.add(item);
-        notifyObservers();
-        notifyAll();
+        if(items.size() < maxCapacity) { // Kontrollera innan tillägg om vi inte överstiger max kapacitet
+            items.add(item);
+            notifyObservers();
+            notifyAll();
+        }
     }
 
     public synchronized Item remove(){

@@ -1,5 +1,6 @@
 package org.arzije.ziberovska.model;
 
+import org.arzije.ziberovska.logging.Log;
 import org.arzije.ziberovska.view.GUI;
 
 import javax.swing.*;
@@ -10,29 +11,24 @@ public class Producer implements Runnable{
     Buffer buffer = null;
     boolean isRunning = true;
     int sleepTime;
-    private OnProducedListener producedListener;
+    private Log logger = Log.getInstance();
 
-    public Producer(Buffer buffer, OnProducedListener producedListener) {
+    public Producer(Buffer buffer) { //, OnProducedListener producedListener
         this.buffer = buffer;
-        this.producedListener = producedListener;
-        this.sleepTime = new Random().nextInt(9000) + 1000;
     }
 
     @Override
     public void run(){
+        this.sleepTime = (new Random().nextInt(10) + 1) * 1000;
+
+        logger.log("Producer created with production interval: " + sleepTime + " ms.");
         while (isRunning){
             try {
-//                Thread.sleep(sleepTime);
-                Thread.sleep(3000);
+                Thread.sleep(sleepTime);
                 buffer.add(new Item(""+(char) ((int)(Math.random()*100))));
 
-                if (producedListener != null){
-                    producedListener.onProduced("Producer produced an item. Production interval: " + sleepTime + " ms. Buffer size: " + buffer.size());
-                }
             } catch (InterruptedException e) {
-                if (producedListener != null){
-                    producedListener.onProduced("Producer: Sleep avbruten");
-                }
+
                 isRunning = false;
                 Thread.currentThread().interrupt();
             }

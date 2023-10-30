@@ -5,17 +5,15 @@ import java.awt.*;
 import org.arzije.ziberovska.controller.Controller;
 import org.arzije.ziberovska.logging.Log;
 import org.arzije.ziberovska.model.BufferObserver;
-import org.arzije.ziberovska.model.OnConsumedListener;
-import org.arzije.ziberovska.model.OnProducedListener;
 
-public class GUI implements BufferObserver , OnProducedListener, OnConsumedListener {
+public class GUI implements BufferObserver{ //  , OnProducedListener, OnConsumedListener
     private Controller controller;
     private JFrame frame;
     private JProgressBar progressBar;
     private JButton producerButton;
     private JButton consumerButton;
-    private JButton loadButton;
-    private JButton saveButton;
+    private JButton clearLogButton;
+
     private JTextArea logTextArea;
     private JScrollPane logScrollPane;
     private Log logger = Log.getInstance();
@@ -46,12 +44,18 @@ public class GUI implements BufferObserver , OnProducedListener, OnConsumedListe
     private void initButtons() {
         producerButton = new JButton("Lägg till");
         consumerButton = new JButton("Ta bort");
+        clearLogButton = new JButton("Rensa loggfil");
+
 
         producerButton.addActionListener(e -> controller.handleProducerButtonClick());
         consumerButton.addActionListener(e -> controller.handleConsumerButtonClick());
+        clearLogButton.addActionListener(e -> {
+            logger.clearLogFile();
+        });
 
         frame.add(producerButton);
         frame.add(consumerButton);
+        frame.add(clearLogButton);
     }
 
     private void initLogArea() {
@@ -84,13 +88,13 @@ public class GUI implements BufferObserver , OnProducedListener, OnConsumedListe
         updateProgressBar();
     }
 
-    @Override
-    public void onProduced(String message) {
-        log(message);
-    }
-
-    @Override
-    public void onConsumed(String message) {
-        log(message);
-    }
+//    @Override
+//    public void onProduced(String message) {
+//        log(message);
+//    }
+//
+//    @Override
+//    public void onConsumed(String message) {
+//        log(message);
+//    }
 }
