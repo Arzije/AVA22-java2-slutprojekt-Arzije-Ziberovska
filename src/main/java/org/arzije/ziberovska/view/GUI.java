@@ -50,7 +50,7 @@ public class GUI implements BufferObserver, LogObserver {
 
 
         producerButton.addActionListener(e -> controller.handleProducerButtonClick());
-        consumerButton.addActionListener(e -> controller.handleConsumerButtonClick());
+        consumerButton.addActionListener(e -> controller.handleRemoveProducerButtonClick());
         clearLogButton.addActionListener(e -> {
             logger.clearLogFile();
         });
@@ -67,18 +67,13 @@ public class GUI implements BufferObserver, LogObserver {
         frame.add(logScrollPane);
     }
 
-    //    public void log(String message) {
-//        logTextArea.insert(message + "\n", 0);
-//        logTextArea.setCaretPosition(0);
-//        logger.log(message);
-//    }
     public void log(String message) {
         logTextArea.insert(message + "\n", 0);
         logTextArea.setCaretPosition(0);
     }
 
     private void updateProgressBar() {
-        int currentSize = controller.getBufferSize();
+        int currentSize = controller.getBufferSize(); // Vf hämtar jag buffer.size() från controller?
         progressBar.setValue(currentSize);
         if (currentSize <= 10) {
             progressBar.setForeground(Color.RED);
@@ -97,17 +92,10 @@ public class GUI implements BufferObserver, LogObserver {
     @Override
     public void updateLog(String logMessage) {
         SwingUtilities.invokeLater(() -> {
-            log(logMessage);
+            if (!logMessage.toLowerCase().contains("consumer")) {
+                log(logMessage);
+            }
         });
     }
 
-//    @Override
-//    public void onProduced(String message) {
-//        log(message);
-//    }
-//
-//    @Override
-//    public void onConsumed(String message) {
-//        log(message);
-//    }
 }

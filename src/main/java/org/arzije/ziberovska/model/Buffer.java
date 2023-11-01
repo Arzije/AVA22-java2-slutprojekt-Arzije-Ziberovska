@@ -10,18 +10,24 @@ public class Buffer{
 
     private Queue<Item> items = new LinkedList<>();
     private List<BufferObserver> observers = new ArrayList<>();
-    private int maxCapacity = 100; // Sätt en förvald kapacitet till 100. Detta kan ändras vid behov.
+    private int maxCapacity;
 
     public Buffer(int maxCapacity) {
         this.maxCapacity = maxCapacity;
     }
 
-    public synchronized void add(Item item){
-        if(items.size() < maxCapacity) { // Kontrollera innan tillägg om vi inte överstiger max kapacitet
-            items.add(item);
-            notifyObservers();
-            notifyAll();
+    public synchronized void add(Item item) {
+        while(items.size() >= maxCapacity) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
+        items.add(item);
+        notifyObservers();
+        notifyAll();
+        System.out.println("Items in buffer: " + items.size());
     }
 
     public synchronized Item remove(){
@@ -32,6 +38,7 @@ public class Buffer{
                 return null;
             }
         }
+        System.out.println("Items in buffer after removal: " + items.size());
         return items.remove();
     }
 

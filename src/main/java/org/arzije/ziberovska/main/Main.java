@@ -10,6 +10,9 @@ public class Main {
     public static void main(String[] args) {
 
         Controller controller = new Controller();
-//        SwingUtilities.invokeLater(() -> new GUI(controller));
+        SwingUtilities.invokeLater(() -> {
+            controller.initGUI();
+            controller.initAfterGUI(); // Initiera consumers efter GUI:n
+        });
     }
 }

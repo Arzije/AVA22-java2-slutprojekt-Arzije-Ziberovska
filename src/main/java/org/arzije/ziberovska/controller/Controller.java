@@ -1,7 +1,5 @@
 package org.arzije.ziberovska.controller;
 
-import org.arzije.ziberovska.logging.LogObserver;
-import org.arzije.ziberovska.logging.LogSubject;
 import org.arzije.ziberovska.model.*;
 import org.arzije.ziberovska.logging.Log;
 import org.arzije.ziberovska.view.GUI;
@@ -11,64 +9,71 @@ import java.util.*;
 public class Controller {
     private Buffer buffer;
     private GUI gui;
-    private List<Thread> producerThreads;
-    private List<Thread> consumerThreads;
+    private List<Producer> producerThreads; //
+    private List<Consumer> consumerThreads;
     private Log logger = Log.getInstance();
 
     public Controller() {
         buffer = new Buffer(100);
-        gui = new GUI(this);
 
         producerThreads = new ArrayList<>();
         consumerThreads = new ArrayList<>();
 
-        initConsumers();
+    }
+
+    public void initGUI(){
+        gui = new GUI(this);
         buffer.addObserver(gui);
         logger.addObserver(gui);
-
         startBufferMonitoring();
+
+    }
+
+    public void initAfterGUI() {
+        initConsumers();
     }
 
     private void initConsumers() {
         Random random = new Random();
-
-        int numOfConsumers = random.nextInt(13) + 3; // Generates a random number between 3 and 15
+        int numOfConsumers = random.nextInt(13) + 3;
 
         for (int i = 0; i < numOfConsumers; i++) {
             addConsumer();
         }
-        logger.log("Total number of workers: " + consumerThreads.size());
+        logger.log("Total number of consumers: " + consumerThreads.size());
     }
 
     public void handleProducerButtonClick() {
         addProducer();
     }
 
-    public void handleConsumerButtonClick() {
+    public void handleRemoveProducerButtonClick() {
         removeProducer();
     }
 
+
     private void addProducer() {
         Producer producer = new Producer(buffer);
-        Thread thread = new Thread(producer);
-        producerThreads.add(thread);
-        thread.start();
+        producerThreads.add(producer);
+        producer.start();
         logger.log("Producer added. Current number of producers: " + producerThreads.size());
     }
 
+
     private void removeProducer() {
         if (!producerThreads.isEmpty()) {
-            Thread lastProducer = producerThreads.remove(producerThreads.size() - 1);
-            lastProducer.interrupt();
+            Producer lastProducer = producerThreads.remove(producerThreads.size() - 1);
+            if (lastProducer.getThread().isAlive()) {
+                lastProducer.stop();
+            }
             logger.log("Producer removed. Current number of producers: " + producerThreads.size());
         }
     }
 
     private void addConsumer() {
         Consumer consumer = new Consumer(buffer);
-        Thread consumerThread = new Thread(consumer);
-        consumerThreads.add(consumerThread);
-        consumerThread.start();
+        consumerThreads.add(consumer);
+        consumer.start();
     }
 
     public int getBufferSize() {
@@ -86,17 +91,22 @@ public class Controller {
                     recentBufferSizes.poll();
                 }
 
-                // Calculate the average
                 int sum = 0;
                 for (int size : recentBufferSizes) {
                     sum += size;
                 }
-                double average = sum / (double) recentBufferSizes.size();
+                double averageBufferSize = sum / (double) recentBufferSizes.size();
 
-                logger.log("Average buffer size over the last 10 seconds: " + average);
+                logger.log("Average buffer size over the last 10 seconds: " + averageBufferSize);
 
-                int highThreshold = (int) (0.9 * 100); // 90% av maxkapaciteten
-                int lowThreshold = (int) (0.1 * 100); // 10% av maxkapaciteten
+                double averageProductionConsumption = 0;
+                if (Producer.getCounter().get() != 0) {
+                    averageProductionConsumption = (double) Consumer.getCounter().get() / Producer.getCounter().get();
+                }
+                logger.log("Average consumption/production over the last 10 seconds: " + averageProductionConsumption);
+
+                int highThreshold = (int) (0.9 * 100);
+                int lowThreshold = (int) (0.1 * 100);
 
                 if (buffer.size() >= highThreshold) {
                     logger.log("Buffer size is now high at " + buffer.size() + " items");
@@ -106,6 +116,7 @@ public class Controller {
             }
         }, 0, 10 * 1000);
     }
+
 
     public void handleClearLogButtonClick() {
         logger.clearLogFile();

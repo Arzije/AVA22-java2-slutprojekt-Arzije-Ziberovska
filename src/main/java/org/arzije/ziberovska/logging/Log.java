@@ -12,7 +12,6 @@ import java.util.function.Consumer;
 public class Log implements LogSubject{
     private static final Logger logger = LogManager.getLogger(Log.class);
     private static final Log instance = new Log();
-
     private final List<LogObserver> logObservers = new ArrayList<>();//
 
     public static Log getInstance(){
