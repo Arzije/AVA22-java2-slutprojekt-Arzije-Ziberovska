@@ -9,16 +9,15 @@ import java.util.*;
 public class Controller {
     private Buffer buffer;
     private GUI gui;
-    private List<Producer> producerThreads; //
-    private List<Consumer> consumerThreads;
-    private Log logger = Log.getInstance();
+    private final List<Producer> producerThreads;
+    private final List<Consumer> consumerThreads;
+    private final Log logger = Log.getInstance();
 
     public Controller() {
         buffer = new Buffer(100);
 
         producerThreads = new ArrayList<>();
         consumerThreads = new ArrayList<>();
-
     }
 
     public void initGUI(){
@@ -26,7 +25,6 @@ public class Controller {
         buffer.addObserver(gui);
         logger.addObserver(gui);
         startBufferMonitoring();
-
     }
 
     public void initAfterGUI() {
@@ -34,8 +32,7 @@ public class Controller {
     }
 
     private void initConsumers() {
-        Random random = new Random();
-        int numOfConsumers = random.nextInt(13) + 3;
+        int numOfConsumers = new Random().nextInt(13) + 3;
 
         for (int i = 0; i < numOfConsumers; i++) {
             addConsumer();
@@ -100,10 +97,11 @@ public class Controller {
                 logger.log("Average buffer size over the last 10 seconds: " + averageBufferSize);
 
                 double averageProductionConsumption = 0;
-                if (Producer.getCounter().get() != 0) {
-                    averageProductionConsumption = (double) Consumer.getCounter().get() / Producer.getCounter().get();
+                if (buffer.getProducedCount() != 0) {
+                    averageProductionConsumption = ((double) buffer.getConsumedCount() / buffer.getProducedCount()) * 100;
                 }
-                logger.log("Average consumption/production over the last 10 seconds: " + averageProductionConsumption);
+                int roundedAverage = (int) Math.round(averageProductionConsumption);
+                logger.log("Average consumption/production over the last 10 seconds: " + roundedAverage + "%");
 
                 int highThreshold = (int) (0.9 * 100);
                 int lowThreshold = (int) (0.1 * 100);
@@ -113,6 +111,11 @@ public class Controller {
                 } else if (buffer.size() <= lowThreshold) {
                     logger.log("Buffer size is now low at " + buffer.size() + " items");
                 }
+                System.out.println("Producer count " + buffer.getProducedCount());
+                System.out.println("Consumer count " + buffer.getConsumedCount());
+                System.out.println("Buffer size " + buffer.size());
+
+                buffer.resetCounters();
             }
         }, 0, 10 * 1000);
     }

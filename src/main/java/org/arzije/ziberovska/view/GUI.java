@@ -2,6 +2,10 @@ package org.arzije.ziberovska.view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.arzije.ziberovska.controller.Controller;
 import org.arzije.ziberovska.logging.Log;
@@ -9,8 +13,9 @@ import org.arzije.ziberovska.logging.LogObserver;
 import org.arzije.ziberovska.model.BufferObserver;
 
 public class GUI implements BufferObserver, LogObserver {
-    private Controller controller;
-    private JFrame frame;
+
+    private final Controller controller;
+    private final JFrame frame;
     private JProgressBar progressBar;
     private JButton producerButton;
     private JButton consumerButton;
@@ -18,7 +23,7 @@ public class GUI implements BufferObserver, LogObserver {
 
     private JTextArea logTextArea;
     private JScrollPane logScrollPane;
-    private Log logger = Log.getInstance();
+    private final Log logger = Log.getInstance();
 
     public GUI(Controller controller) {
         this.controller = controller;
@@ -51,9 +56,7 @@ public class GUI implements BufferObserver, LogObserver {
 
         producerButton.addActionListener(e -> controller.handleProducerButtonClick());
         consumerButton.addActionListener(e -> controller.handleRemoveProducerButtonClick());
-        clearLogButton.addActionListener(e -> {
-            logger.clearLogFile();
-        });
+        clearLogButton.addActionListener(e -> controller.handleClearLogButtonClick());
 
         frame.add(producerButton);
         frame.add(consumerButton);

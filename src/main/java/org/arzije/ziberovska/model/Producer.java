@@ -7,34 +7,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Producer implements Runnable{
 
-    Buffer buffer = null;
+    Buffer buffer;
     private volatile boolean isRunning = false;
     int sleepTime;
     private Log logger = Log.getInstance();
     private Thread thread;
-//    private static int counter = 0;
-    private static AtomicInteger counter = new AtomicInteger(0);
 
-    public Producer(Buffer buffer) { //, OnProducedListener producedListener
+    public Producer(Buffer buffer) {
         this.buffer = buffer;
     }
 
     @Override
     public void run(){
         this.sleepTime = (new Random().nextInt(10) + 1) * 1000;
-
         logger.log("Producer created with production interval: " + sleepTime + " ms.");
+
         while (isRunning){
             try {
                 Thread.sleep(sleepTime);
                 buffer.add(new Item(""+(char) ((int)(Math.random()*100))));
-//                counter++;
-                int count = counter.incrementAndGet();
-                System.out.println("Producer counter: " + count);
-
             } catch (InterruptedException e) {
-
-                isRunning = false;
                 Thread.currentThread().interrupt();
             }
         }
@@ -59,7 +51,4 @@ public class Producer implements Runnable{
         return thread;
     }
 
-    public static AtomicInteger getCounter() {
-        return counter;
-    }
 }

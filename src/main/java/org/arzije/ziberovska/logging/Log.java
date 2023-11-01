@@ -40,13 +40,6 @@ public class Log implements LogSubject{
         }
     }
 
-
-
-
-
-
-
-
     public void clearLogFile() {
         String logFilePath = "C:\\Users\\arzij\\OneDrive\\IdeaProjects\\SlutprojektAvanceradJava\\logs\\app.log"; // direkt användning av filvägen
         try (FileOutputStream stream = new FileOutputStream(logFilePath, false)) {

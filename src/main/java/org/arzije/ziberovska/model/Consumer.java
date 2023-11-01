@@ -9,16 +9,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Consumer implements Runnable{
 
-    private Buffer buffer = null;
+    private Buffer buffer;
     private int sleepTime;
     private Log logger = Log.getInstance();
     private Thread thread;
     private volatile boolean isRunning = false;
-//    private static int counter = 0;
 
-    private static AtomicInteger counter = new AtomicInteger(0);
-
-    public Consumer(Buffer buffer) {//, OnConsumedListener listener
+    public Consumer(Buffer buffer) {
         this.buffer = buffer;
     }
 
@@ -31,12 +28,8 @@ public class Consumer implements Runnable{
             try {
                 Thread.sleep(sleepTime);
                 Item consumed = buffer.remove();
-//                counter++;
-                int count = counter.incrementAndGet();
-                System.out.println("Consumer counter: " + count);
 
             } catch (InterruptedException e) {
-                isRunning = false;
                 Thread.currentThread().interrupt();
             }
         }
@@ -48,21 +41,6 @@ public class Consumer implements Runnable{
             thread = new Thread(this);
             thread.start();
         }
-    }
-
-    public void stop() {
-        isRunning = false;
-        if (thread != null) {
-            thread.interrupt();
-        }
-    }
-
-    public Thread getThread() {
-        return thread;
-    }
-
-    public static AtomicInteger getCounter() {
-        return counter;
     }
 
 }
