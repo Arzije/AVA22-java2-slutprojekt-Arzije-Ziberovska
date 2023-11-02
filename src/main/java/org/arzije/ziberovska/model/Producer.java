@@ -2,10 +2,10 @@ package org.arzije.ziberovska.model;
 
 import org.arzije.ziberovska.logging.Log;
 
+import java.io.Serializable;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public class Producer implements Runnable{
+public class Producer implements Runnable, Serializable {
 
     Buffer buffer;
     private volatile boolean isRunning = false;
@@ -15,6 +15,11 @@ public class Producer implements Runnable{
 
     public Producer(Buffer buffer) {
         this.buffer = buffer;
+    }
+
+    public Producer(Buffer buffer, int sleepTime) {
+        this.buffer = buffer;
+        this.sleepTime = sleepTime;
     }
 
     @Override
@@ -51,4 +56,7 @@ public class Producer implements Runnable{
         return thread;
     }
 
+    public int getSleepTime() { //
+        return sleepTime;
+    }
 }

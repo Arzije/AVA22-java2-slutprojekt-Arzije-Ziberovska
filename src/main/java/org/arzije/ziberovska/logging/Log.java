@@ -5,14 +5,15 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class Log implements LogSubject{
+public class Log implements LogSubject, Serializable {
     private static final Logger logger = LogManager.getLogger(Log.class);
     private static final Log instance = new Log();
-    private final List<LogObserver> logObservers = new ArrayList<>();//
+    private final List<LogObserver> logObservers = new ArrayList<>();
 
     public static Log getInstance(){
         return instance;
@@ -20,7 +21,7 @@ public class Log implements LogSubject{
 
     public void log(String message){
         logger.info(message);
-        notifyObservers(message); //
+        notifyObservers(message);
     }
 
     @Override
@@ -39,11 +40,9 @@ public class Log implements LogSubject{
             observer.updateLog(logMessage);
         }
     }
-
     public void clearLogFile() {
         String logFilePath = "C:\\Users\\arzij\\OneDrive\\IdeaProjects\\SlutprojektAvanceradJava\\logs\\app.log"; // direkt användning av filvägen
         try (FileOutputStream stream = new FileOutputStream(logFilePath, false)) {
-            // Inte skriver något till strömmen här
         } catch (IOException e) {
             logger.error("Error clearing the log file.", e);
         }

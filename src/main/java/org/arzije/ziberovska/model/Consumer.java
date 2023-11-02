@@ -1,13 +1,11 @@
 package org.arzije.ziberovska.model;
 
 import org.arzije.ziberovska.logging.Log;
-import org.arzije.ziberovska.view.GUI;
 
-import javax.swing.*;
+import java.io.Serializable;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public class Consumer implements Runnable{
+public class Consumer implements Runnable, Serializable {
 
     private Buffer buffer;
     private int sleepTime;
@@ -17,6 +15,11 @@ public class Consumer implements Runnable{
 
     public Consumer(Buffer buffer) {
         this.buffer = buffer;
+    }
+
+    public Consumer(Buffer buffer, int sleepTime) {
+        this.buffer = buffer;
+        this.sleepTime = sleepTime;
     }
 
     @Override
@@ -41,6 +44,17 @@ public class Consumer implements Runnable{
             thread = new Thread(this);
             thread.start();
         }
+    }
+
+    public void stop() {
+        isRunning = false;
+        if (thread != null) {
+            thread.interrupt();
+        }
+    }
+
+    public int getSleepTime() {
+        return sleepTime;
     }
 
 }

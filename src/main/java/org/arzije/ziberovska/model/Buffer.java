@@ -75,4 +75,13 @@ public class Buffer{
             observer.update();
         }
     }
+
+    public Queue<Item> getItems() {
+        return new LinkedList<>(items);
+    }
+
+    public void setItems(Queue<Item> items) {
+        this.items = items;
+    }
+
 }

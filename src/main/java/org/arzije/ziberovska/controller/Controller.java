@@ -2,8 +2,10 @@ package org.arzije.ziberovska.controller;
 
 import org.arzije.ziberovska.model.*;
 import org.arzije.ziberovska.logging.Log;
+import org.arzije.ziberovska.states.AppState;
 import org.arzije.ziberovska.view.GUI;
 
+import java.io.*;
 import java.util.*;
 
 public class Controller {
@@ -12,6 +14,7 @@ public class Controller {
     private final List<Producer> producerThreads;
     private final List<Consumer> consumerThreads;
     private final Log logger = Log.getInstance();
+
 
     public Controller() {
         buffer = new Buffer(100);
@@ -47,7 +50,6 @@ public class Controller {
     public void handleRemoveProducerButtonClick() {
         removeProducer();
     }
-
 
     private void addProducer() {
         Producer producer = new Producer(buffer);
@@ -125,5 +127,62 @@ public class Controller {
         logger.clearLogFile();
     }
 
-}
+    public void saveState(String filePath) throws IOException {
+        AppState state = new AppState();
+        state.setNumOfProducers(producerThreads.size());
+        state.setNumOfConsumers(consumerThreads.size());
+        state.setBufferItems(new LinkedList<>(buffer.getItems()));
 
+        for (Producer producer : producerThreads) {
+            state.addProducerSleepTime(producer.getSleepTime());
+        }
+
+        for (Consumer consumer : consumerThreads) {
+            state.addConsumerSleepTime(consumer.getSleepTime());
+        }
+
+
+
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+            oos.writeObject(state);
+        }
+    }
+
+    public AppState loadState(String filePath) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
+            return (AppState) ois.readObject();
+        }
+    }
+
+    public void updateStateFromLoadedData(AppState state) {
+        for (Producer producer : producerThreads) {
+            if (producer.getThread().isAlive()) {
+                producer.stop();
+            }
+        }
+        producerThreads.clear();
+
+        for (Consumer consumer : consumerThreads) {
+            consumer.stop();
+        }
+        consumerThreads.clear();
+
+        buffer.setItems(new LinkedList<>(state.getBufferItems()));
+
+        List<Integer> producerSleepTimes = state.getProducerSleepTimes();
+        for (int i = 0; i < state.getNumOfProducers(); i++) {
+            Producer producer = new Producer(buffer, producerSleepTimes.get(i));
+            producerThreads.add(producer);
+            producer.start();
+        }
+
+        List<Integer> consumerSleepTimes = state.getConsumerSleepTimes();
+        for (int i = 0; i < state.getNumOfConsumers(); i++) {
+            Consumer consumer = new Consumer(buffer, consumerSleepTimes.get(i));
+            consumerThreads.add(consumer);
+            consumer.start();
+        }
+
+        logger.log("State updated from file. Current number of producers: " + producerThreads.size() + ", consumers: " + consumerThreads.size());
+    }
+}
