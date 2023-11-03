@@ -3,6 +3,11 @@ package org.arzije.ziberovska.model;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Represents a thread-safe buffer to store items.
+ * Uses the Observer pattern to notify registered observers of changes to the buffer.
+ */
+
 public class Buffer{
     private Queue<Item> items = new LinkedList<>();
     private final List<BufferObserver> observers = new ArrayList<>();
@@ -10,10 +15,18 @@ public class Buffer{
     private final AtomicInteger producedCounter = new AtomicInteger(0);
     private final AtomicInteger consumedCounter = new AtomicInteger(0);
 
+    /**
+     * Constructor initializing the buffer with a max capacity.
+     * @param maxCapacity Maximum capacity of the buffer.
+     */
     public Buffer(int maxCapacity) {
         this.maxCapacity = maxCapacity;
     }
 
+    /**
+     * Adds an item to the buffer. Blocks if the buffer is full.
+     * @param item The item to add.
+     */
     public synchronized void add(Item item) {
         while(items.size() >= maxCapacity) {
             try {
@@ -27,6 +40,11 @@ public class Buffer{
         notifyObservers();
         notifyAll();
     }
+
+    /**
+     * Removes and returns an item from the buffer. Blocks if the buffer is empty.
+     * @return The removed item.
+     */
 
     public synchronized Item remove(){
         while (items.isEmpty()){

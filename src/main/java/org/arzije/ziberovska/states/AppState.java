@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
+/**
+ * Represents the current state of the application, including number of producers and consumers,
+ * buffer items, and sleep times for both producers and consumers.
+ */
 public class AppState implements Serializable {
     private int numOfProducers;
     private int numOfConsumers;

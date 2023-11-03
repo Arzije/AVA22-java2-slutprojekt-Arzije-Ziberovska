@@ -4,6 +4,13 @@ import org.arzije.ziberovska.logging.Log;
 import org.arzije.ziberovska.model.Buffer;
 import org.arzije.ziberovska.view.GUI;
 
+/**
+ * Controller serves as the central hub coordinating various components of the system.
+ * It connects the buffer with producers, consumers, the buffer monitor, and the GUI.
+ * The Controller handles user interactions, manages the system state, and orchestrates
+ * the various actions between components.
+ */
+
 public class Controller {
     private final Buffer buffer;
     private final ProducerManager producerManager;

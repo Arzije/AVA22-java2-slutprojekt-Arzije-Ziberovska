@@ -8,6 +8,12 @@ import org.arzije.ziberovska.controller.Controller;
 import org.arzije.ziberovska.logging.LogObserver;
 import org.arzije.ziberovska.model.BufferObserver;
 
+/**
+ * Represents the graphical user interface (GUI) of the application, providing a way for
+ * users to interact with the application's features. The GUI consists of progress bars, buttons,
+ * and a log area to display messages.
+ */
+
 public class GUI implements BufferObserver, LogObserver {
     private final Controller controller;
     private final JFrame frame;
@@ -15,6 +21,11 @@ public class GUI implements BufferObserver, LogObserver {
     private JTextArea logTextArea;
     private final BufferMonitor bufferMonitor;
 
+    /**
+     * Constructs the GUI with a given controller and buffer monitor.
+     * @param controller The main controller for the application.
+     * @param bufferMonitor Monitors the buffer state and updates the progress bar accordingly.
+     */
     public GUI(Controller controller, BufferMonitor bufferMonitor) {
         this.controller = controller;
         this.bufferMonitor = bufferMonitor;
@@ -72,11 +83,18 @@ public class GUI implements BufferObserver, LogObserver {
         logTextArea.setCaretPosition(0);
     }
 
+    /**
+     * Updates the progress bar based on buffer usage.
+     */
     @Override
     public void update() {
         bufferMonitor.updateProgressBar(progressBar);
     }
 
+    /**
+     * Updates the log area with a new log message.
+     * @param logMessage The new log message to add.
+     */
     @Override
     public void updateLog(String logMessage) {
         SwingUtilities.invokeLater(() -> {

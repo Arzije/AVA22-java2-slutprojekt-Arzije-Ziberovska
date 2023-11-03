@@ -11,18 +11,30 @@ import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Manages the saving and loading of application state.
+ */
 public class StateManager {
     private final Buffer buffer;
     private final List<Producer> producerThreads;
     private final List<Consumer> consumerThreads;
     private final Log logger = Log.getInstance();
 
+    /**
+     * Constructor initializing the buffer, producer, and consumer threads.
+     * @param buffer Shared buffer between producers and consumers.
+     * @param producers List of producer threads.
+     * @param consumers List of consumer threads.
+     */
     public StateManager(Buffer buffer, List<Producer> producers, List<Consumer> consumers) {
         this.buffer = buffer;
         this.producerThreads = producers;
         this.consumerThreads = consumers;
     }
 
+    /**
+     * Opens a GUI dialog to save the application state to a chosen file.
+     */
     public void saveStateWithGUI() {
         JFileChooser fileChooser = new JFileChooser();
         if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
@@ -37,6 +49,9 @@ public class StateManager {
         }
     }
 
+    /**
+     * Opens a GUI dialog to load the application state from a chosen file.
+     */
     public void loadStateWithGUI() {
         JFileChooser fileChooser = new JFileChooser();
         if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
@@ -51,6 +66,11 @@ public class StateManager {
         }
     }
 
+    /**
+     * Saves the current application state to a specified file.
+     * @param filePath Path of the file to save the state to.
+     * @throws IOException In case of any I/O exceptions during save.
+     */
     public void saveState(String filePath) throws IOException {
         AppState state = new AppState();
         state.setNumOfProducers(producerThreads.size());
@@ -70,12 +90,23 @@ public class StateManager {
         }
     }
 
+    /**
+     * Loads the application state from a specified file.
+     * @param filePath Path of the file to load the state from.
+     * @return The loaded application state.
+     * @throws IOException In case of any I/O exceptions during load.
+     * @throws ClassNotFoundException In case the AppState class is not found.
+     */
     public AppState loadState(String filePath) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
             return (AppState) ois.readObject();
         }
     }
 
+    /**
+     * Updates the application state using the data loaded from a file.
+     * @param state The loaded application state.
+     */
     public void updateStateFromLoadedData(AppState state) {
         for (Producer producer : producerThreads) {
             if (producer.getThread().isAlive()) {

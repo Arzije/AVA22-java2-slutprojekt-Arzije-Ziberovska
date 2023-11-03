@@ -10,14 +10,29 @@ import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * BufferMonitor is responsible for monitoring the status and usage of the buffer.
+ * It tracks the current size of the buffer, logs related statistics, and
+ * provides functionality to update a progress bar reflecting the buffer's status.
+ */
+
 public class BufferMonitor {
     private final Buffer buffer;
     private final Log logger = Log.getInstance();
 
+    /**
+     * Constructor for BufferMonitor.
+     *
+     * @param buffer The buffer that will be monitored.
+     */
     public BufferMonitor(Buffer buffer) {
         this.buffer = buffer;
     }
 
+    /**
+     * Starts monitoring the buffer for its current size and logs
+     * various statistics related to the buffer usage.
+     */
         public void startBufferMonitoring() {
         Queue<Integer> recentBufferSizes = new LinkedList<>();
         Timer timer = new Timer();
@@ -51,6 +66,12 @@ public class BufferMonitor {
         }, 10 * 1000, 10 * 1000);
     }
 
+    /**
+     * Updates the progress bar to reflect the current buffer size.
+     * Changes the color based on the buffer size.
+     *
+     * @param progressBar The progress bar to be updated.
+     */
     public void updateProgressBar(JProgressBar progressBar) {
         int currentSize = buffer.size();
         progressBar.setValue(currentSize);
