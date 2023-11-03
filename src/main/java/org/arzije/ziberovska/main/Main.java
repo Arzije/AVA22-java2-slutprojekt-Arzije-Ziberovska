@@ -7,7 +7,7 @@ import javax.swing.*;
 public class Main {
     public static void main(String[] args) {
 
-        Controller controller = new Controller();
+        Controller controller = new Controller(100);
         SwingUtilities.invokeLater(() -> {
             controller.initGUI();
             controller.initAfterGUI();

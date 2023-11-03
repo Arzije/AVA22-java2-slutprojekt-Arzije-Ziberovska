@@ -3,17 +3,12 @@ package org.arzije.ziberovska.model;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Observable klass
- */
-
 public class Buffer{
-
     private Queue<Item> items = new LinkedList<>();
-    private List<BufferObserver> observers = new ArrayList<>();
-    private int maxCapacity;
-    private AtomicInteger producedCounter = new AtomicInteger(0);
-    private AtomicInteger consumedCounter = new AtomicInteger(0);
+    private final List<BufferObserver> observers = new ArrayList<>();
+    private final int maxCapacity;
+    private final AtomicInteger producedCounter = new AtomicInteger(0);
+    private final AtomicInteger consumedCounter = new AtomicInteger(0);
 
     public Buffer(int maxCapacity) {
         this.maxCapacity = maxCapacity;
@@ -62,12 +57,12 @@ public class Buffer{
         consumedCounter.set(0);
     }
 
-    public void addObserver(BufferObserver observer){
-        observers.add(observer);
+    public int getMaxCapacity() {
+        return maxCapacity;
     }
 
-    public void removeObserver(BufferObserver observer){
-        observers.remove(observer);
+    public void addObserver(BufferObserver observer){
+        observers.add(observer);
     }
 
     private void notifyObservers(){

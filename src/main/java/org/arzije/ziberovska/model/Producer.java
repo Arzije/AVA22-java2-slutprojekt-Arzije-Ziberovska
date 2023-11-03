@@ -7,10 +7,10 @@ import java.util.Random;
 
 public class Producer implements Runnable, Serializable {
 
-    Buffer buffer;
+    private final Buffer buffer;
     private volatile boolean isRunning = false;
-    int sleepTime;
-    private Log logger = Log.getInstance();
+    private int sleepTime;
+    private final Log logger = Log.getInstance();
     private Thread thread;
 
     public Producer(Buffer buffer) {

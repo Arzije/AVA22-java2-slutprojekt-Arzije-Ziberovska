@@ -30,18 +30,13 @@ public class Log implements LogSubject, Serializable {
     }
 
     @Override
-    public void removeObserver(LogObserver observer) {
-        logObservers.remove(observer);
-    }
-
-    @Override
     public void notifyObservers(String logMessage) {
         for (LogObserver observer : logObservers) {
             observer.updateLog(logMessage);
         }
     }
     public void clearLogFile() {
-        String logFilePath = "C:\\Users\\arzij\\OneDrive\\IdeaProjects\\SlutprojektAvanceradJava\\logs\\app.log"; // direkt användning av filvägen
+        String logFilePath = "logs\\app.log";
         try (FileOutputStream stream = new FileOutputStream(logFilePath, false)) {
         } catch (IOException e) {
             logger.error("Error clearing the log file.", e);

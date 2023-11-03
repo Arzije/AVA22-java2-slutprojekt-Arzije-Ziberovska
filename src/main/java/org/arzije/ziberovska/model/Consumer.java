@@ -7,9 +7,9 @@ import java.util.Random;
 
 public class Consumer implements Runnable, Serializable {
 
-    private Buffer buffer;
+    private final Buffer buffer;
     private int sleepTime;
-    private Log logger = Log.getInstance();
+    private final Log logger = Log.getInstance();
     private Thread thread;
     private volatile boolean isRunning = false;
 

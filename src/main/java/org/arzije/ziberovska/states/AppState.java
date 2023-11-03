@@ -11,8 +11,8 @@ public class AppState implements Serializable {
     private int numOfProducers;
     private int numOfConsumers;
     private Queue<Item> bufferItems;
-    private List<Integer> producerSleepTimes = new ArrayList<>();
-    private List<Integer> consumerSleepTimes = new ArrayList<>();
+    private final List<Integer> producerSleepTimes = new ArrayList<>();
+    private final List<Integer> consumerSleepTimes = new ArrayList<>();
 
     public int getNumOfProducers() {
         return numOfProducers;
